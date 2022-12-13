@@ -28,5 +28,5 @@ jobs:
         env:
           HADOLINT_ERROR: "true"
       - name: Fail action on error
-        if: env.HADOLINT_ERROR == "true"
+        if: env.HADOLINT_ERROR == 'true'
         run: exit 1
