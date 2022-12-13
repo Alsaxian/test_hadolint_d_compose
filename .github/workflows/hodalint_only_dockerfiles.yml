@@ -17,7 +17,7 @@ jobs:
 
       - name: Extract Dockerfile paths from docker-compose.yml
         run: |
-          DOCKERFILES=$(grep -oP '^\s*build:\s*\K.*$' docker-compose.yml)
+          DOCKERFILES=$(grep -oP '^\s*build:\s*\K.*Dockerfile$' docker-compose.yml)
           echo "Found Dockerfiles: $DOCKERFILES"
       - name: Lint Dockerfiles
         run: |
@@ -26,8 +26,7 @@ jobs:
             hadolint -f json "$DOCKERFILE" | jq -c '.[] | .file + ":" + (.line|tostring) + " [DL" + .code + "] " + .message'
           done
         env:
-          DOCKERFILES: ${{ env.DOCKERFILES }}
-        id: lint
-      - name: Check for errors
-        if: steps.lint.outputs.exit-code != 0
+          HADOLINT_ERROR: "true"
+      - name: Fail action on error
+        if: env.HADOLINT_ERROR == "true"
         run: exit 1
