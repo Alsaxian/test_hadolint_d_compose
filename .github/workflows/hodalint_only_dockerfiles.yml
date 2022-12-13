@@ -25,3 +25,9 @@ jobs:
             echo "Linting $DOCKERFILE"
             hadolint -f json "$DOCKERFILE" | jq -c '.[] | .file + ":" + (.line|tostring) + " [DL" + .code + "] " + .message'
           done
+        env:
+          DOCKERFILES: ${{ env.DOCKERFILES }}
+        id: lint
+      - name: Check for errors
+        if: steps.lint.outputs.exit-code != 0
+        run: exit 1
