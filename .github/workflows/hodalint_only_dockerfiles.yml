@@ -17,7 +17,8 @@ jobs:
 
       - name: Extract Dockerfile paths from docker-compose.yml
         run: |
-          DOCKERFILES=$(grep -oP '^\s*build:\s*\K.*Dockerfile$' docker-compose.yml)
+          DOCKERFILES=$(grep -oP '^\s*build:\s*\K.*$' docker-compose.yml)
+          DOCKERFILES="$DOCKERFILES/Dockerfile"
           echo "Found Dockerfiles: $DOCKERFILES"
       - name: Lint Dockerfiles
         run: |
