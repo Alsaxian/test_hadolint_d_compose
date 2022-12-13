@@ -11,11 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Extract paths to Dockerfiles
-        uses: jq-actions/jq@v1
+        uses: jq-actions/jq@v2
         with:
           args: '.services[] | select(.build) | .build + "/Dockerfile"'
           inputs:
-            file: docker-compose.yml
+            file: 
+              default: 'docker-compose.yml'
         id: dockerfile_paths
       - name: Lint Dockerfiles
         uses: hadolint/hadolint-action@v1
