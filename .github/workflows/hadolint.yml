@@ -1,0 +1,20 @@
+name: Lint Docker Compose
+
+on:
+  push:
+  manual:
+    types: [trigger]
+
+jobs:
+  hadolint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/setup-docker@v1
+      - name: Install hadolint
+        run: |
+          curl -fL -o hadolint https://github.com/hadolint/hadolint/releases/download/v1.19.0/hadolint-Linux-x86_64
+          chmod +x hadolint
+          sudo mv hadolint /usr/local/bin
+      - name: Lint Docker Compose file
+        run: hadolint -f docker-compose.yml
