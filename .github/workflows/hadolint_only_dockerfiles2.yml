@@ -1,0 +1,23 @@
+name: Lint Dockerfiles
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  lint-dockerfiles:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Extract paths to Dockerfiles
+        uses: jq-actions/jq@v1
+        with:
+          args: '.services[] | select(.build) | .build + "/Dockerfile"'
+          inputs:
+            file: docker-compose.yml
+        id: dockerfile_paths
+      - name: Lint Dockerfiles
+        uses: hadolint/hadolint-action@v1
+        with:
+          args: ${{ steps.dockerfile_paths.outputs.result }}
