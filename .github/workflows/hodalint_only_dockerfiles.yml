@@ -14,6 +14,14 @@ jobs:
           curl -fL -o hadolint https://github.com/hadolint/hadolint/releases/download/v1.19.0/hadolint-Linux-x86_64
           chmod +x hadolint
           sudo mv hadolint /usr/local/bin
+
+      - name: Extract Dockerfile paths from docker-compose.yml
+        run: |
+          DOCKERFILES=$(grep -oP '^\s*build:\s*\K.*$' docker-compose.yml)
+          echo "Found Dockerfiles: $DOCKERFILES"
       - name: Lint Dockerfiles
         run: |
-          hadolint -f json docker-compose.yml | jq -c '.[] | .file + ":" + (.line|tostring) + " [DL" + .code + "] " + .message'
+          for DOCKERFILE in $DOCKERFILES; do
+            echo "Linting $DOCKERFILE"
+            hadolint -f json "$DOCKERFILE" | jq -c '.[] | .file + ":" + (.line|tostring) + " [DL" + .code + "] " + .message'
+          done
