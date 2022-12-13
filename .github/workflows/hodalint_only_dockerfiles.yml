@@ -24,7 +24,7 @@ jobs:
         run: |
           for DOCKERFILE in $DOCKERFILES; do
             echo "Linting $DOCKERFILE"
-            hadolint -f json "$DOCKERFILE" | jq -c '.[] | .file + ":" + (.line|tostring) + " [DL" + .code + "] " + .message'
+            hadolint "$DOCKERFILE" | jq -c '.[] | .file + ":" + (.line|tostring) + " [DL" + .code + "] " + .message'
           done
         env:
           HADOLINT_ERROR: "true"
