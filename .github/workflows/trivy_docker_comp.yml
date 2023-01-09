@@ -1,0 +1,37 @@
+name: trivy scans images built from a docker-compose file
+
+on:
+  [push, pull_request, workflow_dispatch]
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./examples/docker-compose 
+    env: 
+      image_ref: ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build docker image
+        # working-directory: ./examples/docker-compose 
+        run:
+          docker compose Build
+      - name: Get Docker image names
+        run: |
+          echo "Docker images to scan: "
+          if [ -z $image_ref ]; then
+            docker compose convert --images | tee image_names.txt
+          else
+            echo $image_ref | tr ';' '\n' | tee image_names.txt 
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: $(cat image_names.txt)
+          exit-code: 0
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          format: table
+          severity: 'CRITICAL,HIGH'

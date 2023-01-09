@@ -1,0 +1,21 @@
+# docker-compose.yml
+version: '3'
+services:
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.web
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - .env
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile.db
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
