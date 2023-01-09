@@ -62,7 +62,7 @@ jobs:
           path: ${{ env.images_tar_path }}
       - name: Load Docker images
         run:
-          docker load < $images_tar_path
+          docker load --input $images_tar_path
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
