@@ -23,8 +23,9 @@ jobs:
         run:
           docker compose build
       - name: Tarball the images
-        run:
+        run: |
           docker save $(docker compose convert --images) > $images_tar_path 
+          less $images_tar_path
       - name: Get Docker image names
         id: get_names
         run: |
@@ -45,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: my-artifact
-          path: $images_tar_path
+          path: ${{ env.images_tar_path }}
 
   trivy-scan:
     needs: build-and-get-name
@@ -58,7 +59,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: my-artifact
-          path: /tmp
+          path: ${{ env.images_tar_path }}
       - name: Load Docker images
         run:
           docker load < $images_tar_path
