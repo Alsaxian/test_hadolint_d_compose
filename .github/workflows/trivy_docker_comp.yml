@@ -45,7 +45,7 @@ jobs:
       - name: Upload the tarball of docker images
         uses: actions/upload-artifact@v3
         with:
-          name: my-artifact
+          name: images.tar
           path: ${{ env.images_tar_path }}
 
   trivy-scan:
@@ -58,11 +58,11 @@ jobs:
       - name: Downdload the tarball of docker images
         uses: actions/download-artifact@v3
         with:
-          name: my-artifact
-          path: ${{ env.images_tar_path }}
+          name: images.tar
+          path: /tmp/
       - name: Load Docker images
         run:
-          docker load --input $images_tar_path
+          docker load < /tmp/images.tar
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
