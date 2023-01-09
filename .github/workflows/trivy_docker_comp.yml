@@ -41,14 +41,14 @@ jobs:
             echo "image_names: ${image_names[*]}"
             # echo image_names=${image_names[*]} >> $GITHUB_OUTPUT
             # echo image_names="{\"image\":[\"docker-compose-web\", \"docker-compose-db\"]}"  >> $GITHUB_OUTPUT
-            image_json_string='{\"image\": ['
+            image_json_string="{\"image\": ["
             # Loop over the elements in the array
             for image_name in "${image_names[@]}"; do
                 # Add each image name to the JSON string
-                image_json_string+='\"'$image_name'\",'
+                image_json_string+="\"'$image_name'\","
             done
             # Remove the trailing comma and add the closing square bracket and curly braces
-            image_json_string=${image_json_string::-1}']}'
+            image_json_string=${image_json_string::-1}"]}"
 
             echo image_json_string=$image_json_string | tee $GITHUB_OUTPUT
           fi
