@@ -35,7 +35,7 @@ jobs:
             image_names=($(echo $image_names_yq | tr '\n' ' '))
             echo "image_names: ${image_names[*]}"
             # echo image_names=${image_names[*]} >> $GITHUB_OUTPUT
-            echo image_names="{\"image:\":[\"docker-compose-web\", \"docker-compose-db\"]}"
+            echo image_names="{\"image:\":[\"docker-compose-web\", \"docker-compose-db\"]}"  >> $GITHUB_OUTPUT
           fi
 
   trivy-scan:
