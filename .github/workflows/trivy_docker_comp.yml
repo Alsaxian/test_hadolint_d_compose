@@ -43,8 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        image: ${{ fromJson(needs.build-and-get-name.outputs.image_names) }}
+      matrix: ${{ fromJson(needs.build-and-get-name.outputs.image_names) }}
     steps:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
