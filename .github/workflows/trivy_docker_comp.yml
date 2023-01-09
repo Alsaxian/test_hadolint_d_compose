@@ -25,7 +25,7 @@ jobs:
             docker compose convert --images | tee image_names.txt
           else
             echo $image_ref | tr ';' '\n' | tee image_names.txt 
-
+          fi
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
