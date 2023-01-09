@@ -29,7 +29,12 @@ jobs:
           #   docker compose convert --images | tee image_names.txt
           # else
           #   echo $image_ref | tr ';' '\n' | tee image_names.txt 
-            echo image_names=($(echo $(docker compose convert --images) | tr '\n' ' ')) | tee $GITHUB_OUTPUT
+            # echo image_names=($(echo $(docker compose convert --images) | tr '\n' ' ')) | tee $GITHUB_OUTPUT
+            image_names_yq=$(docker compose convert --images)
+            echo $image_names_yq
+            image_names=($(echo $image_names_yq | tr '\n' ' '))
+            echo "image_names: ${image_names[*]}"
+            image_names >> $GITHUB_OUTPUT
           fi
 
   trivy-scan:
