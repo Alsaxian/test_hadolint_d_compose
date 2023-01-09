@@ -1,10 +1,10 @@
-name: trivy scans images built from a docker-compose file
+name: trivy matrix with env not possible, not use this workflow
 
 on:
   [push, pull_request, workflow_dispatch]
 
 env: 
-  image_refs: ''
+  image_names: ''
 
 jobs:
   build-and-get-name:
@@ -12,8 +12,6 @@ jobs:
     defaults:
       run:
         working-directory: ./examples/docker-compose 
-    outputs:
-      image_names: ${{ steps.get_names.outputs.image_names }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,14 +20,13 @@ jobs:
         run:
           docker compose build
       - name: Get Docker image names
-        id: get_names
         run: |
           echo "Docker images to scan: "
-          if [ -z $image_refs ]; then
+          if [ -z $image_names ]; then
           #   docker compose convert --images | tee image_names.txt
           # else
           #   echo $image_ref | tr ';' '\n' | tee image_names.txt 
-            echo image_names=($(echo $(docker compose convert --images) | tr '\n' ' ')) | tee $GITHUB_OUTPUT
+            image_names=$(docker compose convert --images)
           fi
 
   trivy-scan:
@@ -38,7 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ needs.build-and-get-name.outputs.image_names }}
+        image: ${{ env.image_names }}
     steps:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
