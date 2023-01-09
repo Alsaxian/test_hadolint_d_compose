@@ -34,7 +34,8 @@ jobs:
             echo $image_names_yq
             image_names=($(echo $image_names_yq | tr '\n' ' '))
             echo "image_names: ${image_names[*]}"
-            echo image_names=${image_names[*]} >> $GITHUB_OUTPUT
+            # echo image_names=${image_names[*]} >> $GITHUB_OUTPUT
+            echo image_names="{\"image:\":[\"docker-compose-web\", \"docker-compose-db\"]}"
           fi
 
   trivy-scan:
@@ -43,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: ${{ needs.build-and-get-name.outputs.image_names }}
+        image: ${{ fromJson(needs.build-and-get-name.outputs.image_names) }}
     steps:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
