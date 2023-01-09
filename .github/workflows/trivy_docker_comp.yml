@@ -39,7 +39,7 @@ jobs:
             image_names=($(echo $image_names_yq | tr '\n' ' '))
             echo "image_names: ${image_names[*]}"
             # echo image_names=${image_names[*]} >> $GITHUB_OUTPUT
-            echo image_names="{\"image\":[\"docker-compose_web\", \"docker-compose_db\"]}"  >> $GITHUB_OUTPUT
+            echo image_names="{\"image\":[\"docker-compose-web\", \"docker-compose-db\"]}"  >> $GITHUB_OUTPUT
           fi
       - name: Upload the tarball of docker images
         uses: actions/upload-artifact@v3
@@ -58,7 +58,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: my-artifact
-          path: $images_tar_path
+          path: /tmp
       - name: Load Docker images
         run:
           docker load < $images_tar_path
