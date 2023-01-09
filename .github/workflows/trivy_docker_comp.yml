@@ -25,7 +25,7 @@ jobs:
       - name: Tarball the images
         run: |
           docker save $(docker compose convert --images) > $images_tar_path 
-          less $images_tar_path
+          # less $images_tar_path
       - name: Get Docker image names
         id: get_names
         run: |
