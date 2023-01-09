@@ -5,6 +5,7 @@ on:
 
 env: 
   image_refs: ''
+  images_tar_path: '/tmp/output_images.tar'
 
 jobs:
   build-and-get-name:
@@ -21,6 +22,9 @@ jobs:
         # working-directory: ./examples/docker-compose 
         run:
           docker compose build
+      - name: Tarball the images
+        run:
+          docker save $(docker compose convert --images) > $images_tar_path 
       - name: Get Docker image names
         id: get_names
         run: |
@@ -37,6 +41,11 @@ jobs:
             # echo image_names=${image_names[*]} >> $GITHUB_OUTPUT
             echo image_names="{\"image\":[\"docker-compose_web\", \"docker-compose_db\"]}"  >> $GITHUB_OUTPUT
           fi
+      - name: Upload the tarball of docker images
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: $images_tar_path
 
   trivy-scan:
     needs: build-and-get-name
@@ -45,6 +54,14 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.build-and-get-name.outputs.image_names) }}
     steps:
+      - name: Downdload the tarball of docker images
+        uses: actions/download-artifact@v3
+        with:
+          name: my-artifact
+          path: $images_tar_path
+      - name: Load Docker images
+        run:
+          docker load < $images_tar_path
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
