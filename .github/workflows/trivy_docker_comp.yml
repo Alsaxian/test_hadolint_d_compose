@@ -30,6 +30,7 @@ jobs:
           fi
 
   trivy-scan:
+    needs: build-and-get-name
     strategy:
       fail-fast: false
       matrix:
