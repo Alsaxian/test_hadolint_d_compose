@@ -40,7 +40,17 @@ jobs:
             image_names=($(echo $image_names_yq | tr '\n' ' '))
             echo "image_names: ${image_names[*]}"
             # echo image_names=${image_names[*]} >> $GITHUB_OUTPUT
-            echo image_names="{\"image\":[\"docker-compose-web\", \"docker-compose-db\"]}"  >> $GITHUB_OUTPUT
+            # echo image_names="{\"image\":[\"docker-compose-web\", \"docker-compose-db\"]}"  >> $GITHUB_OUTPUT
+            image_json_string='{"image": ['
+            # Loop over the elements in the array
+            for image_name in "${image_names[@]}"; do
+                # Add each image name to the JSON string
+                image_json_string+='"'$image_name'",'
+            done
+            # Remove the trailing comma and add the closing square bracket and curly braces
+            image_json_string=${image_json_string::-1}']}'
+
+            echo image_json_string=$image_json_string | tee $GITHUB_OUTPUT
           fi
       - name: Upload the tarball of docker images
         uses: actions/upload-artifact@v3
@@ -53,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.build-and-get-name.outputs.image_names) }}
+      matrix: ${{ fromJson(needs.build-and-get-name.outputs.image_json_string) }}
     steps:
       - name: Downdload the tarball of docker images
         uses: actions/download-artifact@v3
